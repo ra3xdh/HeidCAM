@@ -1,0 +1,12 @@
+*.o
+HeidCAM-II
+*.user
+*.user.*
+moc_*.cpp
+Makefile
+*.igs
+*.step
+*.err
+*.STEP
+
+
