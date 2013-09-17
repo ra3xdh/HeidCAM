@@ -65,6 +65,11 @@ public slots:
 
 signals:
     void Hor_Vert_gewahlt(bool);
+
+    void ZylX_gewahlt();
+    void ZylZ_gewahlt();
+    void Rect_gewahlt();
+
     void Programm(QTextDocument*);
 };
 

@@ -31,6 +31,10 @@ public:
     bool istVert();
     bool istHor();
 
+    bool istZylX();
+    bool istZylZ();
+    bool istQuad();
+
 signals:
 
 public slots:

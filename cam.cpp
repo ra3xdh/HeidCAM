@@ -40,6 +40,10 @@ CAM::CAM(QWidget* parent) : QMainWindow(parent)
     statusBar()->addWidget(prozent);
     connect(Programmanalisator1,SIGNAL(Progress(int)),prozent,SLOT(setValue(int)));
 
+    connect(this,SIGNAL(ZylX_gewahlt()),freser1,SLOT(WS_wechsel_ZylX()));
+    connect(this,SIGNAL(ZylZ_gewahlt()),freser1,SLOT(WS_wechsel_ZylZ()));
+    connect(this,SIGNAL(Rect_gewahlt()),freser1,SLOT(WS_wechsel_Rect()));
+
 }
 
 
@@ -118,6 +122,13 @@ void CAM::Einstwahlen()
     if (Vert_Hor_dlg->exec()==QDialog::Accepted) {
         bool b = Vert_Hor_dlg->istHor();
         emit Hor_Vert_gewahlt(b);
+
+        if (Vert_Hor_dlg->istZylX()) emit ZylX_gewahlt();
+        else
+        if (Vert_Hor_dlg->istZylZ()) emit ZylZ_gewahlt();
+        else
+        if (Vert_Hor_dlg->istQuad()) emit Rect_gewahlt();
+
     }
 
     delete Vert_Hor_dlg;

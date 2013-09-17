@@ -71,6 +71,21 @@ void Freser::Fresen(int Kod, float X1, float Y1, float Z1, float X2, float Y2, f
      Horisontal = e;
  }
 
+ void Freser::WS_wechsel_ZylX()
+ {
+     BF_typ = Freser::ZYL_X;
+ }
+
+ void Freser::WS_wechsel_ZylZ()
+ {
+     BF_typ = Freser::ZYL_X;
+ }
+
+ void Freser::WS_wechsel_Rect()
+ {
+     BF_typ = Freser::Rect;
+ }
+
  bool Freser::istLangs()
  {
      return Horisontal;
