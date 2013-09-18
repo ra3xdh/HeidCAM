@@ -22,6 +22,8 @@ Freser::Freser(const Handle_AIS_InteractiveContext& aContext,
    WZTab->ToolDef(1,10,3,100,"WZ_FRAS10");
    WZTab->ToolCall(0);
 
+   BF_typ = Freser::Rect;
+
    connect(this,SIGNAL(Loschen()),werkstuck1,SLOT(Einbau()));
 }
 
@@ -31,9 +33,30 @@ Freser::Freser(const Handle_AIS_InteractiveContext& aContext,
 void Freser::Fresen(int Kod, float X1, float Y1, float Z1, float X2, float Y2, float Z2, int I1)
 
 {
+    float Xc,Yc,Zc,R,H;
+
     switch (Kod) {
     case BULK_FORM1 : break;
-    case BULK_FORM2 : werkstuck1->BulkForm(X1,Y1,Z1,X2,Y2,Z2); // заготовки
+
+    case BULK_FORM2 : switch (BF_typ) {
+                         case Freser::Rect : werkstuck1->BulkForm(X1,Y1,Z1,X2,Y2,Z2); // заготовки
+                         break;
+                         case Freser::ZYL_X : Xc=X1;
+                                              Yc=(Y1+Y2)/2;
+                                              Zc=(Z1+Z2)/2;
+                                              R=abs((Z2-Z1)/2);
+                                              H=abs(X2-X1);
+                                              werkstuck1->BulkFormCylindrusX(Xc,Yc,Zc,H,R);
+                                              break;
+                         case Freser::ZYL_Z : Xc=(X1+X2)/2;
+                                              Yc=(Y1+Y2)/2;
+                                              Zc=Z2;
+                                              R=abs((Y2-Y1)/2);
+                                              H=abs(Z2-Z1);
+                                              werkstuck1->BulkFormCylindrusZ(Xc,Yc,Zc,H,R);
+                                              break;
+                         default : break;
+                      }
                       break;
     case FRES_X     : if (Horisontal) werkstuck1->LHX(X1,WZTab->Rwz(),WZTab->Hwz());
                       else werkstuck1->LX(X1,WZTab->Rwz(),WZTab->Lwz()); // простые ходы
@@ -78,7 +101,7 @@ void Freser::Fresen(int Kod, float X1, float Y1, float Z1, float X2, float Y2, f
 
  void Freser::WS_wechsel_ZylZ()
  {
-     BF_typ = Freser::ZYL_X;
+     BF_typ = Freser::ZYL_Z;
  }
 
  void Freser::WS_wechsel_Rect()
