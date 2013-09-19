@@ -9,6 +9,8 @@ INCLUDEPATH += . $(CASROOT)/inc /opt/OpenCASCADE/inc
 
 DEFINES += _OCC64
 
+TRANSLATIONS += HeidCAM_en.ts
+
 # Input
 HEADERS += cam.h \
            einstellungendialog.h \
