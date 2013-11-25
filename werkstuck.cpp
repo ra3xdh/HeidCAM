@@ -1,6 +1,8 @@
 #include <BRep_Tool.hxx>
 #include <BRepAlgoAPI_Fuse.hxx>
 #include <BRepAlgoAPI_Cut.hxx>
+#include <BRepAlgo_Cut.hxx>
+#include <BRepAlgo_Fuse.hxx>
 
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
@@ -89,13 +91,13 @@ Werkstuck::Werkstuck(Handle_AIS_InteractiveContext VC, QObject *parent) :
     LX(0,10,50);
     LY(0,10,50);
     LZ(49,10,50);
-    for (int i=0;i<10;i++) {
+   /* for (int i=0;i<10;i++) {
         LX(150,10,50);
         LY(150,10,50);
         LX(0,10,50);
         LY(0,10,50);
         LIZ(-1,10,50);
-    }
+    }*/
 
     Einbau();
 }
@@ -104,7 +106,7 @@ Werkstuck::Werkstuck(Handle_AIS_InteractiveContext VC, QObject *parent) :
 
 void Werkstuck::Einbau()
 {
-    WS = BRepAlgoAPI_Cut(WS,WZweg);
+    //WS = BRepAlgoAPI_Cut(WS,WZweg);
 
     Handle(AIS_Shape) AIS_WS=new AIS_Shape(WS);
     VC1->CloseAllContexts();
@@ -268,13 +270,13 @@ void Werkstuck::LX(float endPunkt, float Rwz, float Lwz, float Rwz2) // прям
             sLX = mkFillet.Shape();
         }
 
-        //WS = BRepAlgoAPI_Cut(WS,sLX);
-        if (Erst_weg) {
+        WS = BRepAlgo_Cut(WS,sLX);
+        /*if (Erst_weg) {
             WZweg = sLX;
             Erst_weg = false;
         } else {
             WZweg = BRepAlgoAPI_Fuse(WZweg,sLX);
-        }
+        }*/
     }
     Xwz = endPunkt;
 }
@@ -323,13 +325,13 @@ void Werkstuck::LY(float endPunkt, float Rwz, float Lwz, float Rwz2) // прям
             sLY = mkFillet.Shape();
         }
 
-        //WS = BRepAlgoAPI_Cut(WS,sLY);
-        if (Erst_weg) {
+        WS = BRepAlgo_Cut(WS,sLY);
+        /*if (Erst_weg) {
             WZweg = sLY;
             Erst_weg = false;
         } else {
             WZweg = BRepAlgoAPI_Fuse(WZweg,sLY);
-        }
+        }*/
     }
     Ywz=endPunkt;
 }
@@ -361,13 +363,13 @@ void Werkstuck::LZ(float endPunkt, float Rwz, float Lwz, float Rwz2) // прям
             sLZ = mkFillet.Shape();
         }
 
-        //WS = BRepAlgoAPI_Cut(WS,sLZ);
-        if (Erst_weg) {
+        WS = BRepAlgo_Cut(WS,sLZ);
+        /*if (Erst_weg) {
             WZweg = sLZ;
             Erst_weg = false;
         } else {
             WZweg = BRepAlgoAPI_Fuse(WZweg,sLZ);
-        }
+        }*/
     }
 
 }
