@@ -254,29 +254,36 @@ void Werkstuck::LX(float endPunkt, float Rwz, float Lwz, float Rwz2) // прям
 
         TopoDS_Face FlacheBasis = BRepBuilderAPI_MakeFace(Basis);
 
-        gp_Vec PrismVec(0 , 0 , Lwz);
+        if (Erstmal) {
+            fBasis = FlacheBasis;
+            Erstmal = false;
+        } else {
 
-        TopoDS_Shape sLX = BRepPrimAPI_MakePrism(FlacheBasis , PrismVec);
+            fBasis = BRepAlgo_Fuse(fBasis, FlacheBasis);
 
-        if (Rwz2>0) {
-            BRepFilletAPI_MakeFillet mkFillet(sLX);
-            TopExp_Explorer aEdgeExplorer(sLX , TopAbs_EDGE);
+            gp_Vec PrismVec(0 , 0 , Lwz);
 
-            while(aEdgeExplorer.More()){
-            TopoDS_Edge aEdge = TopoDS::Edge(aEdgeExplorer.Current());
-            mkFillet.Add(Rwz2 , aEdge);
-            aEdgeExplorer.Next();
+            TopoDS_Shape sLX = BRepPrimAPI_MakePrism(fBasis , PrismVec);
+
+            if (Rwz2>0) {
+                BRepFilletAPI_MakeFillet mkFillet(sLX);
+                TopExp_Explorer aEdgeExplorer(sLX , TopAbs_EDGE);
+
+                while(aEdgeExplorer.More()){
+                TopoDS_Edge aEdge = TopoDS::Edge(aEdgeExplorer.Current());
+                mkFillet.Add(Rwz2 , aEdge);
+                aEdgeExplorer.Next();
+                }
+                sLX = mkFillet.Shape();
             }
-            sLX = mkFillet.Shape();
+
+            WS = BRepAlgo_Cut(WS,sLX);
+
+            Erstmal = true;
         }
 
-        WS = BRepAlgo_Cut(WS,sLX);
-        /*if (Erst_weg) {
-            WZweg = sLX;
-            Erst_weg = false;
-        } else {
-            WZweg = BRepAlgoAPI_Fuse(WZweg,sLX);
-        }*/
+
+
     }
     Xwz = endPunkt;
 }
@@ -309,7 +316,36 @@ void Werkstuck::LY(float endPunkt, float Rwz, float Lwz, float Rwz2) // прям
 
         TopoDS_Face FlacheBasis = BRepBuilderAPI_MakeFace(Basis);
 
-        gp_Vec PrismVec(0 , 0 , Lwz);
+
+        if (Erstmal) {
+            fBasis = FlacheBasis;
+            Erstmal = false;
+        } else {
+
+            fBasis = BRepAlgo_Fuse(fBasis, FlacheBasis);
+
+            gp_Vec PrismVec(0 , 0 , Lwz);
+
+            TopoDS_Shape sLY = BRepPrimAPI_MakePrism(fBasis , PrismVec);
+
+            if (Rwz2>0) {
+                BRepFilletAPI_MakeFillet mkFillet(sLY);
+                TopExp_Explorer aEdgeExplorer(sLY , TopAbs_EDGE);
+
+                while(aEdgeExplorer.More()){
+                TopoDS_Edge aEdge = TopoDS::Edge(aEdgeExplorer.Current());
+                mkFillet.Add(Rwz2 , aEdge);
+                aEdgeExplorer.Next();
+                }
+                sLY = mkFillet.Shape();
+            }
+
+            WS = BRepAlgo_Cut(WS,sLY);
+
+            Erstmal = true;
+        }
+
+        /*gp_Vec PrismVec(0 , 0 , Lwz);
 
         TopoDS_Shape sLY = BRepPrimAPI_MakePrism(FlacheBasis , PrismVec);
 
@@ -325,13 +361,8 @@ void Werkstuck::LY(float endPunkt, float Rwz, float Lwz, float Rwz2) // прям
             sLY = mkFillet.Shape();
         }
 
-        WS = BRepAlgo_Cut(WS,sLY);
-        /*if (Erst_weg) {
-            WZweg = sLY;
-            Erst_weg = false;
-        } else {
-            WZweg = BRepAlgoAPI_Fuse(WZweg,sLY);
-        }*/
+        WS = BRepAlgo_Cut(WS,sLY);*/
+
     }
     Ywz=endPunkt;
 }
@@ -364,12 +395,7 @@ void Werkstuck::LZ(float endPunkt, float Rwz, float Lwz, float Rwz2) // прям
         }
 
         WS = BRepAlgo_Cut(WS,sLZ);
-        /*if (Erst_weg) {
-            WZweg = sLZ;
-            Erst_weg = false;
-        } else {
-            WZweg = BRepAlgoAPI_Fuse(WZweg,sLZ);
-        }*/
+
     }
 
 }

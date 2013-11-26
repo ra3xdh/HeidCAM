@@ -18,6 +18,9 @@ private:
     TopoDS_Shape WZweg;
 
     TopoDS_Shape F1, F2;
+    TopoDS_Shape fBasis;
+
+
     bool Erstmal;
     bool Erst_weg;
 
