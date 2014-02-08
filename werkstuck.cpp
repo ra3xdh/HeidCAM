@@ -84,8 +84,8 @@ Werkstuck::Werkstuck(Handle_AIS_InteractiveContext VC, QObject *parent) :
     LX(75,10,50);
     LY(75,10,50);
     LZ(25,10,50);
-    LX(25,10,50);
-    LY(35,10,50);
+    LX(25,10,50,2);
+    LY(35,10,50,2);
 
     LZ(55,10,50);
     LX(0,10,50);

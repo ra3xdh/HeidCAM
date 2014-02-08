@@ -15,9 +15,9 @@ void Programmanalisator::ProgramEinladen(QTextDocument* dok)
     LBL_lin.clear();
     LBL_rep.clear();
     LBL_call.clear();
-    unsigned int Nstr = dok->lineCount();
+    int Nstr = dok->lineCount();
 
-    for (unsigned int i=0; i<(dok->lineCount()); i++ ) {
+    for (int i=0; i<(dok->lineCount()); i++ ) {
 
         QString* Kadr= new QString(dok->findBlockByLineNumber(i).text());
 
