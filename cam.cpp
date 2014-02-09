@@ -20,7 +20,7 @@ CAM::CAM(QWidget* parent) : QMainWindow(parent)
     QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
 
     QDockWidget* prog_dock = new QDockWidget(tr("Программа"),this);
-    programEdit = new progRedakt(prog_dock);
+    programEdit = new progEditor(prog_dock);
     prog_dock->setFeatures(QDockWidget::NoDockWidgetFeatures);
     prog_dock->setWidget(programEdit);
     new HeidHighLighter(programEdit->document());
@@ -40,41 +40,41 @@ CAM::CAM(QWidget* parent) : QMainWindow(parent)
     statusBar()->addWidget(prozent);
     connect(Programmanalisator1,SIGNAL(Progress(int)),prozent,SLOT(setValue(int)));
 
-    connect(this,SIGNAL(ZylX_gewahlt()),freser1,SLOT(WS_wechsel_ZylX()));
-    connect(this,SIGNAL(ZylZ_gewahlt()),freser1,SLOT(WS_wechsel_ZylZ()));
-    connect(this,SIGNAL(Rect_gewahlt()),freser1,SLOT(WS_wechsel_Rect()));
+    connect(this,SIGNAL(sigXCylinder()),freser1,SLOT(WS_wechsel_ZylX()));
+    connect(this,SIGNAL(signalZCylinder()),freser1,SLOT(WS_wechsel_ZylZ()));
+    connect(this,SIGNAL(sigBox()),freser1,SLOT(WS_wechsel_Rect()));
 
 }
 
 
 void CAM::createActions() // создать объекты действий и связать их со слотами
 {
-   fileOffnen = new QAction(tr("Открыть"), this); // создать действие
-   connect(fileOffnen, SIGNAL(triggered()), programEdit, SLOT(slotLoad())); // связать сингалы и слоты
+   fileOpen = new QAction(tr("Открыть"), this); // создать действие
+   connect(fileOpen, SIGNAL(triggered()), programEdit, SLOT(slotLoad())); // связать сингалы и слоты
 
-   fileSpeichern = new QAction(tr("Сохранить"), this);
-   connect(fileSpeichern, SIGNAL(triggered()), programEdit, SLOT(slotSave()));
-   fileSpeichernAls = new QAction(tr("Сохранить как"), this);
-   connect(fileSpeichernAls,SIGNAL(triggered()),programEdit,SLOT(slotSaveAs()));
+   fileSave = new QAction(tr("Сохранить"), this);
+   connect(fileSave, SIGNAL(triggered()), programEdit, SLOT(slotSave()));
+   fileSaveAs = new QAction(tr("Сохранить как"), this);
+   connect(fileSaveAs,SIGNAL(triggered()),programEdit,SLOT(slotSaveAs()));
 
    NC_start = new QAction("NC start", this);
-   connect(NC_start, SIGNAL(triggered()), this, SLOT(NC_start_gedruckt()));
+   connect(NC_start, SIGNAL(triggered()), this, SLOT(slotNCstart()));
    connect(this,SIGNAL(Programm(QTextDocument*)),Programmanalisator1,SLOT(ProgramEinladen(QTextDocument*)));
    Typ = new QAction(tr("Настройка обработки"), this);
-   connect(Typ,SIGNAL(triggered()),this,SLOT(Einstwahlen()));
-   connect(this,SIGNAL(Hor_Vert_gewahlt(bool)),freser1,SLOT(Einstwechsel(bool)));
+   connect(Typ,SIGNAL(triggered()),this,SLOT(slotMaschineTypeSetup()));
+   connect(this,SIGNAL(sigHorVertChanged(bool)),freser1,SLOT(Einstwechsel(bool)));
    IGES_export = new QAction(tr("Экспорт в IGES"),this);
    connect(IGES_export,SIGNAL(triggered()),freser1->werkstuck1,SLOT(IGESExportieren()));
    STEP_export = new QAction(tr("Экспорт в STEP"),this);
    connect(STEP_export,SIGNAL(triggered()),freser1->werkstuck1,SLOT(STEPExportieren()));
 
-   WZTabeinst = new QAction(tr("Таблица инструментов"), this);
-   connect(WZTabeinst,SIGNAL(triggered()),this,SLOT(WZTabwahlen()));
+   ToolTableSetup = new QAction(tr("Таблица инструментов"), this);
+   connect(ToolTableSetup,SIGNAL(triggered()),this,SLOT(slotSetupToolTable()));
 
-   Abbrechen = new QAction(tr("Отмена"), this);
-   Wiederholen = new QAction(tr("Повтор"), this);
-   connect(Abbrechen,SIGNAL(triggered()),programEdit,SLOT(undo()));
-   connect(Wiederholen,SIGNAL(triggered()),programEdit,SLOT(redo()));
+   mUndo = new QAction(tr("Отмена"), this);
+   mRedo = new QAction(tr("Повтор"), this);
+   connect(mUndo,SIGNAL(triggered()),programEdit,SLOT(undo()));
+   connect(mRedo,SIGNAL(triggered()),programEdit,SLOT(redo()));
 
    Axon = new QAction(tr("Изометрия"),this);
    connect(Axon,SIGNAL(triggered()),freser1,SLOT(viewAxo()));
@@ -89,15 +89,15 @@ void CAM::createActions() // создать объекты действий и �
 void CAM::createMenus() // создать меню
 {
    File_menu = menuBar()->addMenu(tr("Файл")); // добавить группу меню
-   File_menu->addAction(fileOffnen); // добавить в меню действие
-   File_menu->addAction(fileSpeichern);
-   File_menu->addAction(fileSpeichernAls);
+   File_menu->addAction(fileOpen); // добавить в меню действие
+   File_menu->addAction(fileSave);
+   File_menu->addAction(fileSaveAs);
    File_menu->addAction(IGES_export);
    File_menu->addAction(STEP_export);
 
    Edit_menu = menuBar()->addMenu(tr("Правка"));
-   Edit_menu->addAction(Abbrechen);
-   Edit_menu->addAction(Wiederholen);
+   Edit_menu->addAction(mUndo);
+   Edit_menu->addAction(mRedo);
 
    View_menu = menuBar()->addMenu(tr("Вид"));
    View_menu->addAction(Axon);
@@ -108,43 +108,43 @@ void CAM::createMenus() // создать меню
    Maschine_menu = menuBar()->addMenu(tr("Деталь"));
    Maschine_menu->addAction(NC_start);
    Maschine_menu->addAction(Typ);
-   Maschine_menu->addAction(WZTabeinst);
+   Maschine_menu->addAction(ToolTableSetup);
 
 }
 
 
 
 
-void CAM::Einstwahlen()
+void CAM::slotMaschineTypeSetup()
 
 {
     Vert_Hor_dlg = new Einstellungendialog(freser1->istLangs(),this);
     if (Vert_Hor_dlg->exec()==QDialog::Accepted) {
         bool b = Vert_Hor_dlg->istHor();
-        emit Hor_Vert_gewahlt(b);
+        emit sigHorVertChanged(b);
 
-        if (Vert_Hor_dlg->istZylX()) emit ZylX_gewahlt();
+        if (Vert_Hor_dlg->istZylX()) emit sigXCylinder();
         else
-        if (Vert_Hor_dlg->istZylZ()) emit ZylZ_gewahlt();
+        if (Vert_Hor_dlg->istZylZ()) emit signalZCylinder();
         else
-        if (Vert_Hor_dlg->istQuad()) emit Rect_gewahlt();
+        if (Vert_Hor_dlg->istQuad()) emit sigBox();
 
     }
 
     delete Vert_Hor_dlg;
 }
 
-void CAM::WZTabwahlen()
+void CAM::slotSetupToolTable()
 {
-    wzTabdlg = new WZTabdlg(freser1->WZTab,this);
+    toolTabDlg = new ToolTableDlg(freser1->WZTab,this);
 
-    if (wzTabdlg->exec()==QDialog::Accepted) {
+    if (toolTabDlg->exec()==QDialog::Accepted) {
         qDebug()<<"111";
     }
-    delete wzTabdlg;
+    delete toolTabDlg;
 }
 
-void CAM::NC_start_gedruckt()
+void CAM::slotNCstart()
 {
     //LoadBottle(meinVC->getContext());
     prozent->setValue(0);

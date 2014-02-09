@@ -18,7 +18,7 @@ HEADERS += cam.h \
            heidhighlighter.h \
            operation.h \
            programmanalisator.h \
-           progRedakt.h \
+           progeditor.h \
            qocc.h \
            qoccapplication.h \
            qoccinputoutput.h \
@@ -28,14 +28,14 @@ HEADERS += cam.h \
            werkstuck.h \
            werkzeug.h \
            werkzeugtabelle.h \
-           wztabdlg.h
+           tooltabledlg.h
 SOURCES += cam.cpp \
            einstellungendialog.cpp \
            freser.cpp \
            heidhighlighter.cpp \
            main.cpp \
            programmanalisator.cpp \
-           progRedakt.cpp \
+           progeditor.cpp \
            qoccapplication.cpp \
            qoccinputoutput.cpp \
            qoccinternal.h.cpp \
@@ -44,7 +44,7 @@ SOURCES += cam.cpp \
            werkstuck.cpp \
            werkzeug.cpp \
            werkzeugtabelle.cpp \
-           wztabdlg.cpp
+           tooltabledlg.cpp
 
         LIBS += -L$(CASROOT)/Linux/lib \
                 -lFWOSPlugin \

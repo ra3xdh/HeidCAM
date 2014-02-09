@@ -4,10 +4,10 @@
 #include <QMainWindow>
 #include <QtGui>
 #include <freser.h>
-#include "progRedakt.h"
+#include "progeditor.h"
 #include "programmanalisator.h"
 #include "einstellungendialog.h"
-#include "wztabdlg.h"
+#include "tooltabledlg.h"
 #include "qoccviewercontext.h"
 
 
@@ -20,16 +20,16 @@ private:
     QoccViewerContext* meinVC;
     Freser* freser1;
     Programmanalisator* Programmanalisator1;
-    progRedakt* programEdit;
+    progEditor* programEdit;
     Einstellungendialog* Vert_Hor_dlg;
-    WZTabdlg* wzTabdlg;
+    ToolTableDlg* toolTabDlg;
     QProgressBar* prozent;
 
     // меню
     QMenu* File_menu;
-    QAction* fileOffnen; // открыть файл
-    QAction* fileSpeichern; // сохранить
-    QAction* fileSpeichernAls; // сохранить как
+    QAction* fileOpen; // открыть файл
+    QAction* fileSave; // сохранить
+    QAction* fileSaveAs; // сохранить как
     QAction* IGES_export;
     QAction* STEP_export;
 
@@ -37,7 +37,7 @@ private:
     QMenu* Maschine_menu; // меню машины
     QAction* NC_start; // запуск обработки
     QAction* Typ; // род работы
-    QAction* WZTabeinst; // табл. инстр.
+    QAction* ToolTableSetup; // табл. инстр.
 
     QMenu* View_menu;
     QAction* Axon;
@@ -45,12 +45,12 @@ private:
     QAction* Pan;
     QAction* Fit;
 
-    QMenu* Werkstuck_menu;
+    QMenu* Part_menu;
 
 
     QMenu* Edit_menu;
-    QAction* Abbrechen;
-    QAction* Wiederholen;
+    QAction* mUndo;
+    QAction* mRedo;
 
     void createMenus();
     void createActions();
@@ -59,16 +59,16 @@ public:
     CAM(QWidget* parent = 0);
 
 public slots:
-    void Einstwahlen();
-    void WZTabwahlen();
-    void NC_start_gedruckt();
+    void slotMaschineTypeSetup();
+    void slotSetupToolTable();
+    void slotNCstart();
 
 signals:
-    void Hor_Vert_gewahlt(bool);
+    void sigHorVertChanged(bool);
 
-    void ZylX_gewahlt();
-    void ZylZ_gewahlt();
-    void Rect_gewahlt();
+    void sigXCylinder();
+    void signalZCylinder();
+    void sigBox();
 
     void Programm(QTextDocument*);
 };
