@@ -72,7 +72,7 @@
 Werkstuck::Werkstuck(Handle_AIS_InteractiveContext VC, QObject *parent) :
     QObject(parent)
 {
-    Erstmal=true;
+    firstRun=true;
     VC1=VC;
     Xstart=0; Ystart=0; Zstart=0;
     Xf=0.15; Yf=0.15; Zf=0.15;
@@ -175,7 +175,7 @@ void Werkstuck::BulkForm(float Xmin, float Ymin, float Zmin, float Xmax, float Y
 
     WS = sBulkForm;
 
-    Erst_weg = true;
+    //Erst_weg = true;
 }
 
 void Werkstuck::BulkFormCylindrusZ(float Xc, float Yc, float Zc, float H, float R)
@@ -197,7 +197,7 @@ void Werkstuck::BulkFormCylindrusZ(float Xc, float Yc, float Zc, float H, float 
     Xfmin=Xc-R; Xfmax=Xc+R;
     Yfmin=Yc-R; Yfmax=Yc+R;
 
-    Erst_weg = true;
+    //Erst_weg = true;
 }
 
 void Werkstuck::BulkFormCylindrusX(float Xc, float Yc, float Zc, float H, float R)
@@ -209,7 +209,7 @@ void Werkstuck::BulkFormCylindrusX(float Xc, float Yc, float Zc, float H, float 
     BRepPrimAPI_MakeCylinder zWS(wsAchse,R,H);
     WS = zWS.Shape();
 
-    Erst_weg = true;
+    //Erst_weg = true;
 
     Xstart=Xc;
     Ystart=Yc;
@@ -254,9 +254,9 @@ void Werkstuck::LX(float endPunkt, float Rwz, float Lwz, float Rwz2) // прям
 
         TopoDS_Face FlacheBasis = BRepBuilderAPI_MakeFace(Basis);
 
-        if (Erstmal) {
+        if (firstRun) {
             fBasis = FlacheBasis;
-            Erstmal = false;
+            firstRun = false;
         } else {
 
             fBasis = BRepAlgo_Fuse(fBasis, FlacheBasis);
@@ -279,7 +279,7 @@ void Werkstuck::LX(float endPunkt, float Rwz, float Lwz, float Rwz2) // прям
 
             WS = BRepAlgo_Cut(WS,sLX);
 
-            Erstmal = true;
+            firstRun = true;
         }
 
 
@@ -317,9 +317,9 @@ void Werkstuck::LY(float endPunkt, float Rwz, float Lwz, float Rwz2) // прям
         TopoDS_Face FlacheBasis = BRepBuilderAPI_MakeFace(Basis);
 
 
-        if (Erstmal) {
+        if (firstRun) {
             fBasis = FlacheBasis;
-            Erstmal = false;
+            firstRun = false;
         } else {
 
             fBasis = BRepAlgo_Fuse(fBasis, FlacheBasis);
@@ -342,7 +342,7 @@ void Werkstuck::LY(float endPunkt, float Rwz, float Lwz, float Rwz2) // прям
 
             WS = BRepAlgo_Cut(WS,sLY);
 
-            Erstmal = true;
+            firstRun = true;
         }
 
         /*gp_Vec PrismVec(0 , 0 , Lwz);
@@ -477,7 +477,7 @@ void Werkstuck::IGESExportieren()
     if (str.isEmpty()) return;
     schreiber->ComputeModel();
     bool res2 = schreiber->Write(str.toStdString().c_str());
-    if (res1&&res2) Meldung(tr("Экспорт в IGES успешно!"));
+    if (res1&&res2) showMessage(tr("Экспорт в IGES успешно!"));
     delete schreiber;
 }
 
@@ -491,13 +491,13 @@ void Werkstuck::STEPExportieren()
     QString str = QFileDialog::getSaveFileName();
     if (str.isEmpty()) return;
     bool res1 = schreiber->Write(str.toStdString().c_str());
-    if (res1) Meldung(tr("Экспорт в STEP успешно!"));
+    if (res1) showMessage(tr("Экспорт в STEP успешно!"));
     delete schreiber;
 
 }
 
 
-void Werkstuck::Meldung(QString str)
+void Werkstuck::showMessage(QString str)
 {
     QMessageBox *meldung=new QMessageBox(QMessageBox::Information,tr("Сообщение"),str,
                                       QMessageBox::Ok);
@@ -520,7 +520,7 @@ void Werkstuck::Flache2wahlen()
 void Werkstuck::Abstandmessen()
 {
     BRepExtrema_DistShapeShape *Abstandmesser = new BRepExtrema_DistShapeShape(F1,F2);
-    if (Abstandmesser->IsDone()) Meldung(tr("Расстояние :")+QString::number(Abstandmesser->Value())+tr("мм"));
+    if (Abstandmesser->IsDone()) showMessage(tr("Расстояние :")+QString::number(Abstandmesser->Value())+tr("мм"));
     delete Abstandmesser;
     Handle(AIS_Shape) AF1=new AIS_Shape(F1);
     VC1->HilightWithColor(AF1,Quantity_NOC_GRAY);

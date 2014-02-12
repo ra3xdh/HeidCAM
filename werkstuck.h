@@ -21,8 +21,8 @@ private:
     TopoDS_Shape fBasis;
 
 
-    bool Erstmal;
-    bool Erst_weg;
+    bool firstRun;
+   // bool Erst_weg;
 
     float Xf,Yf,Zf; // размеры заготовки в единицах
     float Xstart, Ystart, Zstart; // начало фрезерования в миллиметрах
@@ -35,7 +35,7 @@ private:
     void AddVertex (double x, double y, double z, Handle_AIS_InteractiveContext theContext);
     void ShowOrigin ( Handle_AIS_InteractiveContext theContext );
 
-    void Meldung(QString str);
+    void showMessage(QString str);
 
 public:
     explicit Werkstuck(Handle_AIS_InteractiveContext VC, QObject *parent = 0);

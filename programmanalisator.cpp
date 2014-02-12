@@ -21,11 +21,11 @@ void Programmanalisator::ProgramEinladen(QTextDocument* dok)
 
         QString* Kadr= new QString(dok->findBlockByLineNumber(i).text());
 
-        int Res = Kommandabarbeiten(Kadr, i);
+        int Res = processCommand(Kadr, i);
 
         if (Res<0) {
             QString str1=tr("Ошибка: Строка: ")+QString::number(i); // ошибка - выдадим сообщение
-            Fehler(str1);
+            errorMessage(str1);
         } else if (Res>0) {
             i=LBL_lin[I1];
             qDebug()<<"linie"<<I1;
@@ -40,9 +40,9 @@ void Programmanalisator::ProgramEinladen(QTextDocument* dok)
     emit fertig();
 }
 
-int Programmanalisator::Kommandabarbeiten(QString* Kadr, int LNum)
+int Programmanalisator::processCommand(QString* Kadr, int LNum)
 {
-    int Typ=KommandAnalisis(Kadr, LNum); // анализируем кадр
+    int Typ=parseCommand(Kadr, LNum); // анализируем кадр
 
     if (Typ<0) {
 
@@ -76,7 +76,7 @@ int Programmanalisator::Kommandabarbeiten(QString* Kadr, int LNum)
 }
 
 
-int Programmanalisator::KommandAnalisis(QString* Kadr, int LNum)
+int Programmanalisator::parseCommand(QString* Kadr, int LNum)
 {
     QStringList Komm=Kadr->split(" ",QString::SkipEmptyParts);
 
@@ -95,11 +95,11 @@ int Programmanalisator::KommandAnalisis(QString* Kadr, int LNum)
         Komm.removeFirst();
         qDebug()<<Komm;
 
-        if (KonvertX(&Komm.first(),&Q1)) Komm.removeFirst();
+        if (ConvertX(&Komm.first(),&Q1)) Komm.removeFirst();
         else return -1;
-        if (KonvertY(&Komm.first(),&Q2)) Komm.removeFirst();
+        if (ConvertY(&Komm.first(),&Q2)) Komm.removeFirst();
         else return -1;
-        if (KonvertZ(&Komm.first(),&Q3)) Komm.removeFirst();
+        if (ConvertZ(&Komm.first(),&Q3)) Komm.removeFirst();
         else return -1;
 
         return BULK_FORM1; // конец обработки
@@ -109,23 +109,23 @@ int Programmanalisator::KommandAnalisis(QString* Kadr, int LNum)
         Komm.removeFirst();
         qDebug()<<Komm;
 
-        if (KonvertX(&Komm.first(),&Q4)) Komm.removeFirst();
+        if (ConvertX(&Komm.first(),&Q4)) Komm.removeFirst();
         else return -1;
-        if (KonvertY(&Komm.first(),&Q5)) Komm.removeFirst();
+        if (ConvertY(&Komm.first(),&Q5)) Komm.removeFirst();
         else return -1;
-        if (KonvertZ(&Komm.first(),&Q6)) Komm.removeFirst();
+        if (ConvertZ(&Komm.first(),&Q6)) Komm.removeFirst();
         else return -1;
 
         return BULK_FORM2;
     } else if (Komm[0]=="L") {
         Komm.removeFirst();
 
-        if (KonvertIX(&Komm.first(),&Q1)) return FRES_IX;
-        else if (KonvertX(&Komm.first(),&Q1)) return FRES_X;
-        else if (KonvertIY(&Komm.first(),&Q1)) return FRES_IY;
-        else if (KonvertY(&Komm.first(),&Q1)) return FRES_Y;
-        else if (KonvertIZ(&Komm.first(),&Q1)) return FRES_IZ;
-        else if (KonvertZ(&Komm.first(),&Q1)) return FRES_Z;
+        if (ConvertIX(&Komm.first(),&Q1)) return FRES_IX;
+        else if (ConvertX(&Komm.first(),&Q1)) return FRES_X;
+        else if (ConvertIY(&Komm.first(),&Q1)) return FRES_IY;
+        else if (ConvertY(&Komm.first(),&Q1)) return FRES_Y;
+        else if (ConvertIZ(&Komm.first(),&Q1)) return FRES_IZ;
+        else if (ConvertZ(&Komm.first(),&Q1)) return FRES_Z;
         else return -1;
     } else if ((Komm[0]=="TOOL")&&(Komm[1]=="CALL")) {
         bool res=false;
@@ -139,7 +139,7 @@ int Programmanalisator::KommandAnalisis(QString* Kadr, int LNum)
         int N = Komm.at(1).toInt(&res);
         if (!res) return -1;
         if (LBL_rep.contains(N)||(LBL_call.contains(N))||(LBL_lin.contains(N)))  {
-            Fehler(tr("Метка ")+QString::number(N)+tr(" задана дважды"));
+            errorMessage(tr("Метка ")+QString::number(N)+tr(" задана дважды"));
             return -2;
         }
         if (!LBL_rep.contains(N)) LBL_rep.insert(N, 0);
@@ -168,7 +168,7 @@ int Programmanalisator::KommandAnalisis(QString* Kadr, int LNum)
     return 0; // неопознанная команда
 }
 
-bool Programmanalisator::KonvertX(QString *s, float *Q)
+bool Programmanalisator::ConvertX(QString *s, float *Q)
 
 {
     if (s->at(0)=='X') {
@@ -179,7 +179,7 @@ bool Programmanalisator::KonvertX(QString *s, float *Q)
     } else return false;
 }
 
-bool Programmanalisator::KonvertY(QString *s, float *Q)
+bool Programmanalisator::ConvertY(QString *s, float *Q)
 
 {
     if (s->at(0)=='Y') {
@@ -190,7 +190,7 @@ bool Programmanalisator::KonvertY(QString *s, float *Q)
     } else return false;
 }
 
-bool Programmanalisator::KonvertZ(QString *s, float *Q)
+bool Programmanalisator::ConvertZ(QString *s, float *Q)
 
 {
     if (s->at(0)=='Z') {
@@ -201,7 +201,7 @@ bool Programmanalisator::KonvertZ(QString *s, float *Q)
     } else return false;
 }
 
-bool Programmanalisator::KonvertIX(QString *s, float *Q)
+bool Programmanalisator::ConvertIX(QString *s, float *Q)
 
 {
     if ((s->at(0)=='I')&&(s->at(1)=='X')) {  // проход в инкрементах по Х
@@ -212,7 +212,7 @@ bool Programmanalisator::KonvertIX(QString *s, float *Q)
     } else return false;
 }
 
-bool Programmanalisator::KonvertIY(QString *s, float *Q)
+bool Programmanalisator::ConvertIY(QString *s, float *Q)
 
 {
     if ((s->at(0)=='I')&&(s->at(1)=='Y')) {  // проход в инкрементах по Х
@@ -223,7 +223,7 @@ bool Programmanalisator::KonvertIY(QString *s, float *Q)
     } else return false;
 }
 
-bool Programmanalisator::KonvertIZ(QString *s, float *Q)
+bool Programmanalisator::ConvertIZ(QString *s, float *Q)
 
 {
     if ((s->at(0)=='I')&&(s->at(1)=='Z')) {  // проход в инкрементах по Х
@@ -234,7 +234,7 @@ bool Programmanalisator::KonvertIZ(QString *s, float *Q)
     } else return false;
 }
 
-void Programmanalisator::Fehler(QString str)
+void Programmanalisator::errorMessage(QString str)
 {
     QMessageBox *fehler=new QMessageBox(QMessageBox::Information,tr("Ошибка"),str,
                                       QMessageBox::Ok);

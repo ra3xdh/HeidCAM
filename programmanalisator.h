@@ -10,12 +10,12 @@ class Programmanalisator : public QObject
 
 private:
 
-    bool KonvertX(QString *s, float* Q);
-    bool KonvertY(QString *s, float* Q);
-    bool KonvertZ(QString *s, float* Q);
-    bool KonvertIX(QString *s, float* Q);
-    bool KonvertIY(QString *s, float* Q);
-    bool KonvertIZ(QString *s, float* Q);
+    bool ConvertX(QString *s, float* Q);
+    bool ConvertY(QString *s, float* Q);
+    bool ConvertZ(QString *s, float* Q);
+    bool ConvertIX(QString *s, float* Q);
+    bool ConvertIY(QString *s, float* Q);
+    bool ConvertIZ(QString *s, float* Q);
     /*bool KonvertBulkForm1(QStringList *Komm);
     bool KonvertBulkForm2(QStringList *Komm);
     bool KonvertL(QStringList *Komm, int* Koord);*/
@@ -23,7 +23,7 @@ private:
     QMap<int, int> LBL_rep;
     QMap<int, bool> LBL_call;
 
-    void Fehler(QString str);
+    void errorMessage(QString str);
 
 protected:
 
@@ -32,8 +32,8 @@ protected:
 
 public:
 
-    int KommandAnalisis(QString* Kadr, int LNum);
-    int Kommandabarbeiten(QString* Kadr, int LNum);
+    int parseCommand(QString* Kadr, int LNum);
+    int processCommand(QString* Kadr, int LNum);
 
     Programmanalisator(QObject *parent = 0);
 
