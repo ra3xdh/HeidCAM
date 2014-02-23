@@ -1,7 +1,42 @@
-With HeidCAM you can test NC-programm for Heidenhain TNC-135,124,128 and similar on PC. 
-HeidCAM is based on openCASCADE and Qt4.
+HeidCAM --- Heidenhain NC program test and debug software for Linux;
 
-Having NC-program in Klartext notation you can build 3D model of part and view and measure it on screen. 
+---------
+
+CAD and CAM software for Linux is in short supply. For this reason Linux is not
+suitable for engineers. There is my little effort to overcome this fallback. 
+
+Having NC-program in Klartext notation you can build 3D model of part and view
+and measure it on screen. 
+
+HeidCAM is CAM software for Linux based on Qt and OpenCASCADE. With HeidCAM you
+can build 3D model on PC having NC-program for straight-cut Heidenhain
+TNC-controls for milling machines such as TNC-124, TNC-128, TNC-135 and
+similar. With HeidCAM you can test NC-programm on PC. HeidCAM is equivalent of
+programming station for such TNC-controls. The difference from Heidenhain
+programming station is that you can interactively rotate, pan, zoom 3D part on
+screen. You can interactively measure distances from the one part surface to
+another. With Heidenhain programming stations you cannot perform such actions.
+This advantage is achieved due to that TNC-control interface is not emulated on
+PC and HeidCAM uses its own interface.
+
+
+You can debug NC-programm without physical TNC control. HeidCAM can be used for
+educational purposes. 
+
+HeidCAM advantages:
+- interactive NC-program editing
+- interactive part pan, zoom and rotation
+- measurement tool
+- cylindrical bulk forms
+- Linux full compatible
+- Russian interface as option
+
+Need to work:
+- Milling time calculation
+- Part weight calculation
+- TNC-cycles and Q-parameters support
+- STEP/IGES export
+
 
 You can use HeidCAM sources free for non-commercial usage. For commercial usage
 please contact with me.
@@ -10,7 +45,6 @@ please contact with me.
 
 Vadim Kusnetsov
 ra3xdh@gmail.com
-
 
 Программа предназначена для построения на персональном компьютере трёхмерной
 твёрдотельной модели детали, изготавливаемой по программам для стоек ЧПУ
